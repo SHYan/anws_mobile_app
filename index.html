@@ -1,0 +1,328 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>ANWS-AOAWS</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="jquery.mobile/jquery.mobile-1.2.0.min.css" />
+	<link rel="stylesheet" href="aoaws.css" />
+	<style type="text/css">
+
+table {
+	width: 95%;
+	background: #ffffff;
+	border-top: 1px solid #e3f1fe;
+	border-right: 1px solid #e3f1fe;
+	margin: 1em auto;
+	border-collapse: collapse;
+}
+
+caption {
+	font: bold 1em/1.2em "Century Gothic", "Trebuchet MS", Arial, Helvetica,
+		sans-serif;
+	color: #66a3d3;
+	letter-spacing: .1em;
+	padding: 0;
+	margin: 1em 0 0 0;
+	margin-bottom: 0;
+	caption-side: top;
+	text-align: center;
+}
+
+tr.odd td,tr.odd,tr.odd th .column1 {
+	background: #f4f9fe url(image/background.gif) no-repeat;
+}
+
+.column1 {
+	background: #f9fcfe;
+}
+
+td {
+	color: #678197;
+	border-bottom: 1px solid #e3f1fe;
+	border-left: 1px solid #e5eff8;
+	padding: .6em 1em;
+	text-align: left;
+}
+
+th {
+	font-weight: normal;
+	color: #678197;
+	text-align: left;
+	border-bottom: 1px solid #e3f1fe;
+	border-left: 1px solid #e5eff8;
+	padding: .6em 1em;
+}
+
+thead th {
+	background: #f4f9fe;
+	text-align: left;
+	font: bold 1.2em/1.2em "Century Gothic", "Trebuchet MS", Arial,
+		Helvetica, sans-serif;
+	color: #66a3d3
+}
+
+.phoney {
+	background-image: -moz-linear-gradient(left, right, from(#A1D004),
+		to(#6B9A00) );
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.00, #A1D004
+		), color-stop(1.00, #6B9A00) );
+}
+
+.phoneytext {
+	text-shadow: 0 -1px 0 #000;
+	color: #fff;
+	font-family: Helvetica Neue, Helvetica, arial;
+	font-size: 18px;
+	line-height: 25px;
+	padding: 4px 45px 4px 15px;
+	font-weight: bold;
+	background: url(image/arrow.png) 95% 50% no-repeat;
+}
+
+.phoneytab {
+	text-shadow: 0 -1px 0 #000;
+	color: #fff;
+	font-family: Helvetica Neue, Helvetica, arial;
+	font-size: 18px;
+	background: rgb(112, 112, 112) !important;
+}
+
+</style>
+	<script src="jquery.mobile/jquery-1.8.3.min.js"></script>
+	<script src="jquery.mobile/jquery.mobile-1.2.0.min.js"></script>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	<script type="text/javascript" src="jquery.mobile/infobubble.js"></script>
+	<script type="text/javascript" src="aoaws_init_db.js"></script>
+	<script type="text/javascript" src="aoaws_map.js"></script>
+	<script type="text/javascript">
+	$.mobile.defaultPageTransition = 'none';
+    $.mobile.defaultDialogTransition = 'none';
+	$(':jqmData(url^=airport_dialog)').live('pagebeforecreate', 
+			  function(event) {
+			    $(this).filter(':jqmData(url*=ui-page)').find(':jqmData(role=header)')
+			      .prepend('<a href="#" data-rel="back" data-transition="none" data-icon="back">返回</a>')
+			  });
+	
+	$('#af').live('click', function(){
+		curContinent = 'af';
+		$.mobile.changePage("#map");
+	});
+	$('#sa').live('click', function(){
+		curContinent = 'sa';
+		$.mobile.changePage("#map");
+	});
+	$('#na').live('click', function(){
+		curContinent = 'na';
+		$.mobile.changePage("#map");
+	});
+	$('#as').live('click', function(){
+		curContinent = 'as';
+		$.mobile.changePage("#map");
+	});
+	$('#au').live('click', function(){
+		curContinent = 'au';
+		$.mobile.changePage("#map");
+	});
+	$('#tw').live('click', function(){
+		curContinent = 'tw';
+		$.mobile.changePage("#map");
+	});
+	$('#eu').live('click', function(){
+		curContinent = 'eu';
+		$.mobile.changePage("#map");
+	});
+	$('#cn').live('click', function(){
+		//event.stopPropagation();
+		curContinent = 'cn';
+		$.mobile.changePage("#map");
+	});
+	</script>
+	
+</head>
+<body onload="initDB()">
+
+	<div data-role="page" id="map" data-position="fixed" data-dom-cache="true">
+		<div data-role="header" data-theme="b" >
+			<h2 style="float: center;">航空氣象資訊</h2>
+			<a href="#map_state" class="ui-btn-right">地區</a>
+		</div>
+		
+		<div id="mapCanvas"></div>
+		
+		<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
+			<div data-role="navbar" class="ui-navbar-custom">
+				<ul>
+					<li><a href="#map" id="mapnav" data-icon="custom" class="ui-btn-active">地圖</a></li>
+					<li><a href="#airport_dialog" id="listnav" data-icon="custom">列表</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div data-role="page" id="airport_dialog" data-dom-cache="true">
+		<div data-role="header" data-theme="b">
+			<h2 style="float: center;">選擇地區</h2>
+			<a href="#map" data-rel="back" class="ui-btn-right">取消</a>
+		</div>
+		<div data-role="content">
+			<ul data-role="listview" id="stateList">
+				<li id="twMap">
+					<h3>臺灣</h3>
+					<p>臺灣各民航機場最新天氣</p>
+					<ul id="twList">
+					</ul>
+				</li>
+				<li id="cnMap">
+					<h3>大陸</h3>
+					<p>大陸各民航機場最新天氣</p>
+					<ul id="cnList">
+					</ul>
+				</li>
+				<li id="asMap">
+					<h3>亞洲</h3>
+					<p>含香港澳門及其它亞洲各民航機場最新天氣</p>
+					<ul id="asList">
+					</ul>
+				</li>
+				<li id="auMap">
+					<h3>大洋洲</h3>
+					<p>大洋洲各民航機場最新天氣</p>
+					<ul id="auList">
+					</ul>
+				</li>
+				<li id="naMap">
+					<h3>北美洲</h3>
+					<p>北美洲各民航機場最新天氣</p>
+					<ul id="naList">
+					</ul>
+				</li>
+				<li id="saMap">
+					<h3>中南美洲</h3>
+					<p>中南美洲各民航機場最新天氣</p>
+					<ul id="saList">
+					</ul>
+				</li>
+				<li id="euMap">
+					<h3>歐洲</h3>
+					<p>歐洲各民航機場最新天氣</p>
+					<ul id="euList">
+					</ul>
+				</li>
+				<li id="afMap">
+					<h3>中東&非洲</h3>
+					<p>中東與非洲洲各民航機場最新天氣</p>
+					<ul id="afList">
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
+			<div data-role="navbar" class="ui-navbar-custom">
+				<ul>
+					<li><a href="#map" id="mapnav" data-icon="custom">地圖</a></li>
+					<li><a href="#airport_dialog" id="listnav" data-icon="custom" class="ui-btn-active">列表</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+	<div data-role="page" id="map_state" data-dom-cache="true">
+		<div data-role="header" data-theme="b">
+			<a href="#" data-rel="back" data-icon="back">返回</a>
+			<h2 style="float: center;">選擇地圖呈現地區</h2>
+		</div>
+		<div data-role="content">
+			<ul data-role="listview">
+				<li id="tw">
+						<h3>臺灣</h3>
+						<p>臺灣各民航機場最新天氣</p>
+				</li>
+				<li id="cn">
+						<h3>大陸</h3>
+						<p>大陸各民航機場最新天氣</p>
+				</li>
+				<li id="as">
+						<h3>亞洲</h3>
+						<p>含香港澳門及其它亞洲各民航機場最新天氣</p>
+				</li>
+				<li id="au">
+						<h3>大洋洲</h3>
+						<p>大洋洲各民航機場最新天氣</p>
+				</li>
+				<li id="na">
+						<h3>北美洲</h3>
+						<p>北美洲各民航機場最新天氣</p>
+				</li>
+				<li id="sa">
+						<h3>中南美洲</h3>
+						<p>中南美洲各民航機場最新天氣</p>
+				</li>
+				<li id="eu">
+						<h3>歐洲</h3>
+						<p>歐洲各民航機場最新天氣</p>
+				</li>
+				<li id="af">
+						<h3>中東&非洲</h3>
+						<p>中東與非洲洲各民航機場最新天氣</p>
+				</li>
+			</ul>
+		</div>
+	</div>
+	
+	<div data-role="page" id="weather_detail" data-close-btn-text="關閉">
+		<div data-role="header" data-theme="b">
+			<a href="#" data-icon="arrow-l" data-iconpos="left" data-rel="back" data-transition="slide" data-direction="reverse">返回</a>
+			<h2>全球各民航機場最新天氣</h2>
+		</div>
+		<div data-role="content">
+			<table summary="全球各民航機場最新天氣">
+				<thead>
+					<tr class="odd">
+						<th scope="col" abbr="country" width="40%">國家</th>
+						<th scope="col" id="state" width="60%"></th>
+					</tr>	
+				</thead>
+				<tbody>
+					<tr scope="row">
+						<th>機場</th>
+						<td id="airport_name"></td>
+					</tr>
+					<tr class="odd">
+						<th>所在地</th>
+						<td id="place"></td>
+					</tr>
+					<tr class="row">
+						<th>時間</th>
+						<td id="time"></td>
+					</tr>
+					<tr class="odd">
+						<th>風向</th>
+						<td id="wind_direction"></td>
+					</tr>
+					<tr class="row">
+						<th>風速</th>
+						<td id="wind_speed"></td>
+					</tr>
+					<tr class="odd">
+						<th>能見度</th>
+						<td id="visibility"></td>
+					</tr>
+					<tr class="row">
+						<th>天氣</th>
+						<td id="weather"></td>
+					</tr>
+					<tr class="odd">
+						<th>雲冪</th>
+						<td id="ceiling"></td>
+					</tr>
+					<tr class="row">
+						<th>溫度</th>
+						<td id="temperature"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

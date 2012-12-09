@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+<head>
+<title>jQuery Mobile: Dialog Examples</title>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1,maximum-scale=1">
+<link rel="stylesheet" href="jquery.mobile/jquery.mobile-1.2.0.min.css" />
+<style type="text/css">
+
+table {
+	width: 90%;
+	background: #ffffff;
+	border-top: 1px solid #e3f1fe;
+	border-right: 1px solid #e3f1fe;
+	margin: 1em auto;
+	border-collapse: collapse;
+}
+
+caption {
+	font: bold 1.2em/2em "Century Gothic", "Trebuchet MS", Arial, Helvetica,
+		sans-serif;
+	color: #66a3d3;
+	letter-spacing: .1em;
+	padding: 0;
+	margin: 1em 0 0 0;
+	margin-bottom: 0;
+	caption-side: top;
+	text-align: center;
+}
+
+tr.odd td,tr.odd,tr.odd th .column1 {
+	background: #f4f9fe url(image/background.gif) no-repeat;
+}
+
+.column1 {
+	background: #f9fcfe;
+}
+
+td {
+	color: #678197;
+	border-bottom: 1px solid #e3f1fe;
+	border-left: 1px solid #e5eff8;
+	padding: .6em 1em;
+	text-align: left;
+}
+
+th {
+	font-weight: normal;
+	color: #678197;
+	text-align: left;
+	border-bottom: 1px solid #e3f1fe;
+	border-left: 1px solid #e5eff8;
+	padding: .6em 1em;
+}
+
+thead th {
+	background: #f4f9fe;
+	text-align: left;
+	font: bold 1.2em/1.2em "Century Gothic", "Trebuchet MS", Arial, Helvetica,
+		sans-serif;
+	color: #66a3d3
+}
+</style>
+<script type="text/javascript" src="jquery.mobile/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="jquery.mobile/jquery.mobile-1.2.0.min.js"></script>
+<script type="text/javascript">
+	//$('a[data-icon=delete]').hide();
+	//$('a:jqmData(role=delete)').hide();
+	function getParam(name) {
+		var match = RegExp('[?&]' + name + '=([^&]*)').exec(
+				window.location.search);
+		return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+	}
+
+	function initDialog() {
+		
+		itemsDb = openDatabase('aoaws', '1.0', 'Web Storage DB', 1024*1024);
+		itemsDb.readTransaction(function(transaction) {
+			var airportId = getParam('aid');
+			if(!airportId) return;
+	    	transaction.executeSql(("SELECT a.airport_name, a.airport_id, a.place, a.state, w.wind_direction, w.wind_speed, w.visibility, w.weather, w.temperature, w.ceiling, w.observation_time, w.metar_text FROM aws_airport as a, aws_weather as w where w.airport_id=a.airport_id and a.airport_id = ?order by a.id"), [airportId], function(transaction, results) {
+	    		var w = results.rows.item(0);
+	    		if(w.airport_name!=null && w.airport_name!="undefined")  $('#w_msg_title').html(w.airport_name+"氣象資訊");
+	    		else $('#w_msg_title').html("");
+	    		if(w.state!=null && w.state!="undefined")  $('#w_state').html(w.state);
+	    		else $('#w_state').html("");
+	    		if(w.place!=null && w.place!="undefined")  $('#w_place').html(w.place);
+	    		else $('#w_place').html("");
+	    		if(w.airport_name!=null && w.airport_name!="undefined")  $('#w_airport_name').html(w.airport_name);
+	    		else $('#w_airport_name').html("");
+	    		if(w.observation_time!=null && w.observation_time!="undefined")  $('#w_time').html(w.observation_time);
+	    		else $('#w_time').html("");
+	    		if(w.wind_direction!=null && w.wind_direction!="undefined")  $('#w_wind_direction').html(w.wind_direction);
+	    		else $('#w_wind_direction').html("");
+	    		if(w.wind_speed!=null && w.wind_speed!="undefined")  $('#w_wind_speed').html(w.wind_speed);
+	    		else $('#w_wind_speed').html("");
+	    		if(w.visibility!=null && w.visibility!="undefined")  $('#w_visibility').html(w.visibility);
+	    		else $('#w_visibility').html("");
+	    		if(w.weather!=null && w.weather!="undefined")  $('#w_weather').html(w.weather);
+	    		else $('#w_weather').html("");
+	    		if(w.ceiling!=null && w.ceiling!="undefined")  $('#w_ceiling').html(w.ceiling);
+	    		else $('#w_ceiling').html("");
+	    		if(w.temperature!=null && w.temperature!="undefined")  $('#w_temperature').html(w.temperature);
+	    		else $('#w_temperature').html("");
+	    		
+	        });
+	    });
+	}
+	 
+</script>
+</head>
+<body onload="initDialog()">
+
+	<div data-role="dialog" id="weather_dialog" data-close-btn-text="關閉" data-dom-cache="true">
+		<div data-role="header" data-theme="b">
+		<a href="#" data-icon="arrow-l" data-iconpos="left" data-rel="back" data-transition="slide" data-direction="reverse">返回</a>
+			<h1>全球各民航機場最新天氣</h1>
+		</div>
+		<div data-role="content">
+			<table summary="全球各民航機場最新天氣">
+				<caption id="w_msg_title"></caption>
+				<thead>
+					<tr class="odd">
+						<th scope="col" abbr="country" width="40%">國家</th>
+						<th scope="col" id="w_state" width="60%"></th>
+					</tr>	
+				</thead>
+				<tbody>
+					<tr scope="row">
+						<th>機場</th>
+						<td id="w_airport_name"></td>
+					</tr>
+					<tr class="odd">
+						<th>所在地</th>
+						<td id="w_place"></td>
+					</tr>
+					<tr class="row">
+						<th>時間</th>
+						<td id="w_time"></td>
+					</tr>
+					<tr class="odd">
+						<th>風向</th>
+						<td id="w_wind_direction"></td>
+					</tr>
+					<tr class="row">
+						<th>風速</th>
+						<td id="w_wind_speed"></td>
+					</tr>
+					<tr class="odd">
+						<th>能見度</th>
+						<td id="w_visibility"></td>
+					</tr>
+					<tr class="row">
+						<th>天氣</th>
+						<td id="w_weather"></td>
+					</tr>
+					<tr class="odd">
+						<th>雲冪</th>
+						<td id="w_ceiling"></td>
+					</tr>
+					<tr class="row">
+						<th>溫度</th>
+						<td id="w_temperature"></td>
+					</tr>
+				</tbody>
+			</table>
+			<p>
+				<a href="#" data-role="button" data-rel="back" data-transition="slide" data-direction="reverse">確定</a>
+			</p>
+		</div>
+	</div>
+
+
+</body>
+</html>
