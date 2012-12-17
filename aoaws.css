@@ -66,7 +66,7 @@
 }
 
 
-/**footer navi **/
+/**footer navi 
 .ui-navbar-custom .ui-btn .ui-btn-inner {
 	font-size: 11px !important;
 	padding-top: 26px !important;
@@ -84,6 +84,7 @@
 	border-radius: none !important;
 }
 
+
 #mapnav .ui-icon {
 	background: url(image/map.png) 50% 50% no-repeat;
 	background-size: 22px 20px;
@@ -97,4 +98,39 @@
 #syncnav .ui-icon {
 	background: url(image/sync.png) 50% 50% no-repeat;
 	background-size: 20px 20px;
+}
+**/
+
+.ui-shadow,
+.ui-btn-up-a,
+.ui-btn-hover-a,
+.ui-btn-down-a,
+.ui-body-b,
+.ui-btn-up-b,
+.ui-btn-hover-b,
+.ui-btn-down-b,
+.ui-bar-c,
+.ui-body-c,
+.ui-btn-up-c,
+.ui-btn-hover-c,
+.ui-btn-down-c,
+.ui-bar-c,
+.ui-body-d,
+.ui-btn-up-d,
+.ui-btn-hover-d,
+.ui-btn-down-d,
+.ui-bar-d,
+.ui-body-e,
+.ui-btn-up-e,
+.ui-btn-hover-e,
+.ui-btn-down-e,
+.ui-bar-e,
+.ui-overlay-shadow,
+.ui-shadow,
+.ui-btn-active,
+.ui-body-a,
+.ui-bar-a {
+ text-shadow: none;
+ box-shadow: none;
+ -webkit-box-shadow: none;
 }

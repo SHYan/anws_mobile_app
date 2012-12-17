@@ -2,36 +2,37 @@ var USE_PHONEGAP = false;
 var SCRIPT_LOAD_TIMEOUT = 3000;
 var MAP_LOAD_TIMEOUT = 3000;
 var FIT_BOUNDS_TIMEOUT = 500;
-
 var defaultLatLng = new google.maps.LatLng(23.56399,120.84961);
 
-itemsDb = openDatabase('aoaws', '1.0', 'Web Storage DB', 256*1024);
+var itemsDb = openDatabase('aoaws', '1.0', 'Web Storage DB', 50*1024);
 $('#map').live('pageshow', initMap);
 $('#airport_dialog').live('pageshow', showList);
 
 function showList(){
 	getList(displayList);
 }
-
-setTimeout(checkConnection, SCRIPT_LOAD_TIMEOUT);
-function checkConnection() {
-    if (typeof google == "undefined") {
-        alert("Can't connect to the Google Maps server. Please make sure youare connected to the internet, then try again.");
-        window.location.reload(true);
-    }
-}
-
 /**
  * Redraws the map when the user rotates their device, so that the markers
  * remain onscreen.
  */
 $(window).orientationchange(function (e) {
     if ($.mobile.activePage.attr('id') == "map") {
-        window.airportsMap.fitBounds(window.airportsMapBounds);
+    	//console.log("aoaws_map : orientationchange");
+        //window.airportsMap.fitBounds(window.airportsMapBounds);
     }
 });
 
 function initMap() {
+	//console.log("aoaws_map : initMap");
+	setTimeout(checkConnection, SCRIPT_LOAD_TIMEOUT);
+	function checkConnection() {
+		//console.log("aoaws_map : checkConnection of google");
+	    if (typeof google == "undefined") {
+	    	alert('網路連線逾時,系統自動切換為列表頁面!');
+            $.mobile.changePage("#airport_dialog");
+	    }
+	}
+	
 	var mapOptions = {
 	        zoom: 8,
 	        center: defaultLatLng,
@@ -43,57 +44,51 @@ function initMap() {
 	        },
 	        mapTypeId: google.maps.MapTypeId.ROADMAP
 	    };
-	console.log("map reset center to : "+curContinent);
-	//statePos = getParam("state");
-	statePos = curContinent;
-    if(statePos){
-    	statePos = statePos.toString();
-    	if(statePos.length==2) {
-    		if(statePos=="au"){
-		    	mapOptions.center = new google.maps.LatLng(-28.07198,147.83203);
-		    	mapOptions.zoom = 3;
-    		}else if(statePos=="as"){
-    			mapOptions.center = new google.maps.LatLng(27.68353,112.14844);
-		    	mapOptions.zoom = 3;
-    		}else if(statePos=="cn"){
-    			mapOptions.center = new google.maps.LatLng(31.735643,110.224609);
-		    	mapOptions.zoom = 4;
-    		}else if(statePos=="tw"){
-    			mapOptions.center = defaultLatLng;
-		    	mapOptions.zoom = 7;
-    		}else if(statePos=="na"){
-    			mapOptions.center = new google.maps.LatLng(39.02772,-102.74414);
-		    	mapOptions.zoom = 3;
-    		}else if(statePos=="sa"){
-    			mapOptions.center = new google.maps.LatLng(-16.46769,-63.45703);
-		    	mapOptions.zoom = 3;
-    		}else if(statePos=="eu"){
-    			mapOptions.center = new google.maps.LatLng(49.78126,12.56836);
-		    	mapOptions.zoom = 4;
-    		}else if(statePos=="af"){
-    			mapOptions.center = new google.maps.LatLng(6.31530,24.96094);
-		    	mapOptions.zoom = 3;
-    		}
-    		
-    	}
+	
+    if(curContinent){
+		if(curContinent=="au"){
+	    	mapOptions.center = new google.maps.LatLng(-28.07198,147.83203);
+	    	mapOptions.zoom = 3;
+		}else if(curContinent=="as"){
+			mapOptions.center = new google.maps.LatLng(27.68353,112.14844);
+	    	mapOptions.zoom = 3;
+		}else if(curContinent=="cn"){
+			mapOptions.center = new google.maps.LatLng(31.735643,110.224609);
+	    	mapOptions.zoom = 4;
+		}else if(curContinent=="tw"){
+			mapOptions.center = defaultLatLng;
+	    	mapOptions.zoom = 7;
+		}else if(curContinent=="na"){
+			mapOptions.center = new google.maps.LatLng(39.02772,-102.74414);
+	    	mapOptions.zoom = 3;
+		}else if(curContinent=="sa"){
+			mapOptions.center = new google.maps.LatLng(-16.46769,-63.45703);
+	    	mapOptions.zoom = 3;
+		}else if(curContinent=="eu"){
+			mapOptions.center = new google.maps.LatLng(49.78126,12.56836);
+	    	mapOptions.zoom = 4;
+		}else if(curContinent=="af"){
+			mapOptions.center = new google.maps.LatLng(6.31530,24.96094);
+	    	mapOptions.zoom = 3;
+		}
     }
+    
     window.airportsMap = new google.maps.Map(document.getElementById('mapCanvas'), mapOptions);
     
-    
     var addMarkers = function(airports) {
-    	
+    	//console.log("aoaws_map : addMarkers : airports.length" + airports.length);
+    	//window.airportsMapBounds = new google.maps.LatLngBounds();
     	for (var i = 0; i < airports.length; i++) {
         	var marker = new google.maps.Marker({
                 position: new google.maps.LatLng(airports[i].latitude, airports[i].longitude),
                 map: window.airportsMap,
                 title: airports[i].airport_name,
                 aid: airports[i].airport_id,
-                icon: "image/airport_marker.png",
-                airport_id: airports[i].airport_id
+                icon: "image/airport_marker.png"
             });
         	
         	var infoBubble2 = new InfoBubble({
-                content: '<div class="phoneytext">'+airports[i].id+'</div>',
+                content: '<div class="phoneytext">'+airports[i].airport_name+'</div>',
                 shadowStyle: 1,
                 padding: 0,
                 backgroundColor: 'rgb(57,57,57)',
@@ -107,14 +102,15 @@ function initMap() {
                 backgroundClassName: 'phoney',
                 arrowStyle: 2
               });
-
+        	//window.airportsMapBounds.extend(marker.getPosition());
         	google.maps.event.addListener(marker, 'click', function() {
+        		//console.log("aoaws_map : google marker click : airport_id = " + this.aid);
         		$.mobile.page.prototype.options.domCache = true;
 	        	var contentString = '<div class="phoneytext">'+this.title+'</div>';
 	        	infoBubble2.setContent(contentString);
 	        	$(infoBubble2.bubble_).attr("id", "g_"+this.aid);
 	        	$(infoBubble2.bubble_).live("click", function() {
-	        		console.log("this click id is : "+this.id);
+	        		//console.log("aoaws_map : google infobubble click : airport_id = " + this.id);
 	        		var tmp = {'airport_id': this.id};
 	    			$.mobile.changePage("#weather_detail");
 	    			fetchWeatherDetail(tmp);
@@ -124,22 +120,35 @@ function initMap() {
 	        });
         }
     };
+    
     getAirportLocation(addMarkers);
     function getAirportLocation(callback) {
-    	console.log("aoaws_map : getAirportLocation");
+    	//console.log("aoaws_map : getAirportLocation");
 		var airports = [];
 		itemsDb.readTransaction(function(transaction) {
-			console.log("now is selecting marker of this continent : "+curContinent);
-	    	transaction.executeSql(("SELECT a.id, a.airport_name, a.airport_id, w.weather, a.latitude, a.longitude FROM aws_airport as a, aws_weather as w where w.airport_id=a.airport_id and a.continent_en=? order by a.id"), [curContinent], function(transaction, results) {
-	    		console.log("this continent marker numbers are : "+ results.rows.length);
+			//console.log("aoaws_map : getAirportLocation : curContinent : " + curContinent);
+			transaction.executeSql(("SELECT a.id, a.airport_name, a.airport_id, w.weather, a.latitude, a.longitude FROM aws_airport as a, aws_weather as w where w.airport_id=a.airport_id and a.continent_en=? order by a.id"), [curContinent], function(transaction, results) {
+				//console.log("aoaws_map : getAirportLocation : select all airport list");
 	    		for (var ii = 0; ii < results.rows.length; ii++) {
 	                airports.push(results.rows.item(ii));
 	            }
 	    		callback(airports);
-	        }, errorHandler);
+	        },
+	        function(transaction, error){
+	        	//console.log("***aoaws_map : getAirportLocation : error select airport information "+error.message);
+	        	}
+	        );
 	    });
-		
 	}
+    /*
+    setTimeout( function() { 
+    		//console.log("aoaws_map : fitBounds");
+    		window.airportsMap.fitBounds(window.airportsMapBounds);
+    	}, 
+    	FIT_BOUNDS_TIMEOUT 
+    );
+    */
+    
 }
 
 
@@ -148,9 +157,7 @@ function displayList(ls){
 	$.mobile.showPageLoadingMsg();
 	for(var i=0; i<ls.length; i++){
 		r = ls[i];
-		//var lihtml = '<a href="#weather_detail"><h4>'+r.airport_name+'</h4></a>';
-		var lihtml = '<h4>'+r.airport_name+'</h4>';
-		//var li = $('<li><a href="weather.html?aid='+r.airport_id+'" data-rel="dialog"><h4>'+r.airport_name+'</h4></a></li>');
+		var lihtml = '<a><h4>'+r.airport_name+'</h4></a>';
 		var li = $(document.createElement('li'));
 		$(li).attr('id', "l_"+r.airport_id);
 	    $(li).bind('click', function(){
@@ -186,14 +193,13 @@ function displayList(ls){
 	$('#saList').listview('refresh');
 	$('#naList').listview('refresh');
 	$('#afList').listview('refresh');
-	$('#ouList').listview('refresh');
+	$('#euList').listview('refresh');
 	$('#stateList').listview('refresh');
 	$.mobile.hidePageLoadingMsg();
 }
 function fetchWeatherDetail(entry){
 	$.mobile.showPageLoadingMsg();
 	
-	itemsDb = openDatabase('aoaws', '1.0', 'Web Storage DB', 1024*1024);
 	itemsDb.readTransaction(function(transaction) {
 		var airportId = entry.airport_id;
 		if(!airportId) return;
@@ -221,7 +227,11 @@ function fetchWeatherDetail(entry){
     		if(w.temperature!=null && w.temperature!="undefined")  $('#temperature').html(w.temperature);
     		else $('#temperature').html("");
     		
-        }, errorHandler);
+        },
+        function(error){
+        	//console.log("***aoaws_map : fetchWeatherDetail : error getting weather information " + error.message);
+        	}
+        );
     });
 	
 	$.mobile.hidePageLoadingMsg();
@@ -235,6 +245,10 @@ function getList(callback){
                 airports.push(r);
             }
     		callback(airports);
-        }, errorHandler);
+        },
+        function(error){
+        	//console.log("***aoaws_map : getList : error getting all airport list " + error.message);
+        	}
+    	);
     });
 }

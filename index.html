@@ -9,7 +9,7 @@
 	<style type="text/css">
 
 table {
-	width: 95%;
+	width: 99%;
 	background: #ffffff;
 	border-top: 1px solid #e3f1fe;
 	border-right: 1px solid #e3f1fe;
@@ -41,7 +41,7 @@ td {
 	color: #678197;
 	border-bottom: 1px solid #e3f1fe;
 	border-left: 1px solid #e5eff8;
-	padding: .6em 1em;
+	padding: .6em .6em;
 	text-align: left;
 }
 
@@ -51,7 +51,7 @@ th {
 	text-align: left;
 	border-bottom: 1px solid #e3f1fe;
 	border-left: 1px solid #e5eff8;
-	padding: .6em 1em;
+	padding: .6em .6em;
 }
 
 thead th {
@@ -88,20 +88,103 @@ thead th {
 	background: rgb(112, 112, 112) !important;
 }
 
+.ui-btn-corner-tl {
+	-moz-border-radius-topleft: 0.2em;
+	-webkit-border-top-left-radius: 0.2em;
+	border-top-left-radius: 0.2em;
+}
+.ui-btn-corner-tr {
+	-moz-border-radius-topright: 0.2em;
+	-webkit-border-top-right-radius: 0.2em;
+	border-top-right-radius: 0.2em;
+}
+.ui-btn-corner-bl {
+	-moz-border-radius-bottomleft: 0.2em;
+	-webkit-border-bottom-left-radius: 0.2em;
+	border-bottom-left-radius: 0.2em;
+}
+.ui-btn-corner-br {
+	-moz-border-radius-bottomright: 0.2em;
+	-webkit-border-bottom-right-radius: 0.2em;
+	border-bottom-right-radius: 0.2em;
+}
+.ui-btn-corner-top {
+	-moz-border-radius-topleft: 0.2em;
+	-webkit-border-top-left-radius: 0.2em;
+	border-top-left-radius: 0.2em;
+	-moz-border-radius-topright: 0.2em;
+	-webkit-border-top-right-radius: 0.2em;
+	border-top-right-radius: 0.2em;
+}
+.ui-btn-corner-bottom {
+	-moz-border-radius-bottomleft: 0.2em;
+	-webkit-border-bottom-left-radius: 0.2em;
+	border-bottom-left-radius: 0.2em;
+	-moz-border-radius-bottomright: 0.2em;
+	-webkit-border-bottom-right-radius: 0.2em;
+	border-bottom-right-radius: 0.2em;
+}
+.ui-btn-corner-right {
+	 -moz-border-radius-topright: 0.2em;
+	-webkit-border-top-right-radius: 0.2em;
+	border-top-right-radius: 0.2em;
+	-moz-border-radius-bottomright: 0.2em;
+	-webkit-border-bottom-right-radius: 0.2em;
+	border-bottom-right-radius: 0.2em;
+}
+.ui-btn-corner-left {
+	-moz-border-radius-topleft: 0.2em;
+	-webkit-border-top-left-radius: 0.2em;
+	border-top-left-radius: 0.2em;
+	-moz-border-radius-bottomleft: 0.2em;
+	-webkit-border-bottom-left-radius: 0.2em;
+	border-bottom-left-radius: 0.2em;
+}
+.ui-btn-corner-all {
+	-moz-border-radius: 0.2em;
+	-webkit-border-radius: 0.2em;
+	border-radius: 0.2em;
+}
+
+.ui-corner-tl,
+.ui-corner-tr,
+.ui-corner-bl,
+.ui-corner-br,
+.ui-corner-top,
+.ui-corner-bottom,
+.ui-corner-right,
+.ui-corner-left,
+.ui-corner-all,
+.ui-btn-corner-tl,
+.ui-btn-corner-tr,
+.ui-btn-corner-bl,
+.ui-btn-corner-br,
+.ui-btn-corner-top,
+.ui-btn-corner-bottom,
+.ui-btn-corner-right,
+.ui-btn-corner-left,
+.ui-btn-corner-all {
+  -webkit-background-clip: padding-box;
+     -moz-background-clip: padding;
+          background-clip: padding-box;
+}
 </style>
 	<script src="jquery.mobile/jquery-1.8.3.min.js"></script>
 	<script src="jquery.mobile/jquery.mobile-1.2.0.min.js"></script>
+
 	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 	<script type="text/javascript" src="jquery.mobile/infobubble.js"></script>
 	<script type="text/javascript" src="aoaws_init_db.js"></script>
 	<script type="text/javascript" src="aoaws_map.js"></script>
 	<script type="text/javascript">
+	
 	$.mobile.defaultPageTransition = 'none';
     $.mobile.defaultDialogTransition = 'none';
+    
 	$(':jqmData(url^=airport_dialog)').live('pagebeforecreate', 
 			  function(event) {
 			    $(this).filter(':jqmData(url*=ui-page)').find(':jqmData(role=header)')
-			      .prepend('<a href="#" data-rel="back" data-transition="none" data-icon="back">返回</a>')
+			      .prepend('<a href="#" data-rel="back" data-icon="back" class="ui-btn-right">返回</a>')
 			  });
 	
 	$('#af').live('click', function(){
@@ -133,37 +216,18 @@ thead th {
 		$.mobile.changePage("#map");
 	});
 	$('#cn').live('click', function(){
-		//event.stopPropagation();
 		curContinent = 'cn';
 		$.mobile.changePage("#map");
 	});
 	</script>
 	
 </head>
-<body onload="initDB()">
+<body onload="initDatabase()">
 
-	<div data-role="page" id="map" data-position="fixed" data-dom-cache="true">
-		<div data-role="header" data-theme="b" >
-			<h2 style="float: center;">航空氣象資訊</h2>
-			<a href="#map_state" class="ui-btn-right">地區</a>
-		</div>
-		
-		<div id="mapCanvas"></div>
-		
-		<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
-			<div data-role="navbar" class="ui-navbar-custom">
-				<ul>
-					<li><a href="#map" id="mapnav" data-icon="custom" class="ui-btn-active">地圖</a></li>
-					<li><a href="#airport_dialog" id="listnav" data-icon="custom">列表</a></li>
-				</ul>
-			</div>
-		</div>
-	</div>
 
 	<div data-role="page" id="airport_dialog" data-dom-cache="true">
 		<div data-role="header" data-theme="b">
 			<h2 style="float: center;">選擇地區</h2>
-			<a href="#map" data-rel="back" class="ui-btn-right">取消</a>
 		</div>
 		<div data-role="content">
 			<ul data-role="listview" id="stateList">
@@ -218,69 +282,99 @@ thead th {
 			</ul>
 		</div>
 		<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
-			<div data-role="navbar" class="ui-navbar-custom">
+			<div data-role="navbar">
 				<ul>
-					<li><a href="#map" id="mapnav" data-icon="custom">地圖</a></li>
-					<li><a href="#airport_dialog" id="listnav" data-icon="custom" class="ui-btn-active">列表</a></li>
+					<li><a href="#map" id="mapnav">地圖</a></li>
+					<li><a href="#airport_dialog" id="listnav" class="ui-btn-active">列表</a></li>
 				</ul>
 			</div>
 		</div>
 	</div>
 	
+	
+	<div data-role="page" id="map" data-position="fixed" data-dom-cache="true">
+		<div data-role="header" data-theme="b" >
+			<h2 style="float: center;">航空氣象資訊</h2>
+			<a href="#map_state" class="ui-btn-right">地區</a>
+		</div>
+		
+		<div id="mapCanvas"></div>
+		
+		<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
+			<div data-role="navbar">
+				<ul>
+					<li><a href="#map" id="mapnav" class="ui-btn-active">地圖</a></li>
+					<li><a href="#airport_dialog" id="listnav">列表</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+	
 	<div data-role="page" id="map_state" data-dom-cache="true">
 		<div data-role="header" data-theme="b">
-			<a href="#" data-rel="back" data-icon="back">返回</a>
+			<a href="#" data-rel="back" data-icon="back" class="ui-btn-right">返回</a>
 			<h2 style="float: center;">選擇地圖呈現地區</h2>
 		</div>
 		<div data-role="content">
 			<ul data-role="listview">
-				<li id="tw">
+				<li id="tw"><a>
 						<h3>臺灣</h3>
 						<p>臺灣各民航機場最新天氣</p>
+						</a>
 				</li>
-				<li id="cn">
+				<li id="cn"><a>
 						<h3>大陸</h3>
 						<p>大陸各民航機場最新天氣</p>
+						</a>
 				</li>
-				<li id="as">
+				<li id="as"><a>
 						<h3>亞洲</h3>
 						<p>含香港澳門及其它亞洲各民航機場最新天氣</p>
+						</a>
 				</li>
-				<li id="au">
+				<li id="au"><a>
 						<h3>大洋洲</h3>
 						<p>大洋洲各民航機場最新天氣</p>
+						</a>
 				</li>
-				<li id="na">
+				<li id="na"><a>
 						<h3>北美洲</h3>
 						<p>北美洲各民航機場最新天氣</p>
+						</a>
 				</li>
-				<li id="sa">
+				<li id="sa"><a>
 						<h3>中南美洲</h3>
-						<p>中南美洲各民航機場最新天氣</p>
+						<p>中南美洲各民航機場最新天氣</p></a>
 				</li>
-				<li id="eu">
+				<li id="eu"><a>
 						<h3>歐洲</h3>
-						<p>歐洲各民航機場最新天氣</p>
+						<p>歐洲各民航機場最新天氣</p></a>
 				</li>
-				<li id="af">
+				<li id="af"><a>
 						<h3>中東&非洲</h3>
-						<p>中東與非洲洲各民航機場最新天氣</p>
+						<p>中東與非洲洲各民航機場最新天氣</p></a>
 				</li>
 			</ul>
 		</div>
 	</div>
+
 	
 	<div data-role="page" id="weather_detail" data-close-btn-text="關閉">
 		<div data-role="header" data-theme="b">
-			<a href="#" data-icon="arrow-l" data-iconpos="left" data-rel="back" data-transition="slide" data-direction="reverse">返回</a>
-			<h2>全球各民航機場最新天氣</h2>
+			<a href="#" data-rel="back" data-icon="back" class="ui-btn-right">返回</a>
+			<h2>機場最新氣象資訊</h2>
 		</div>
 		<div data-role="content">
 			<table summary="全球各民航機場最新天氣">
 				<thead>
 					<tr class="odd">
-						<th scope="col" abbr="country" width="40%">國家</th>
-						<th scope="col" id="state" width="60%"></th>
+						<th scope="col" abbr="country" width="30%">國家</th>
+						<th scope="col" id="state" width="70%"></th>
 					</tr>	
 				</thead>
 				<tbody>
