@@ -5,10 +5,10 @@
  */
 //var USE_PHONEGAP = false;
 //
-var itemsDb, curContinent, networkFlag=1, reloadCount = 0;
+var itemsDb = window.openDatabase('aoaws', '1.0', 'Web Storage DB', 60*1024);
+var curContinent, networkFlag=1, mapLoadCount = 0, reloadCount = 0;
 var airportServer = "http://www.anws.gov.tw/weather_app/sync_client_weather.php?method=airport&time=";
 var weatherServer = "http://www.anws.gov.tw/weather_app/sync_client_weather.php?method=weather&time=";
-
 
 curContinent = getParam("state");
 if(!curContinent || curContinent.toString().length==0 || curContinent=="undefined") curContinent = "tw";
@@ -19,9 +19,10 @@ function getParam(name) {
 }
 
 function initDatabase() {
+	
+	$.mobile.showPageLoadingMsg();
 	//console.log("aoaws_init_db : initDatabase");
 	
-	itemsDb = window.openDatabase('aoaws', '1.0', 'Web Storage DB', 50*1024);
 	//clearTable();
 	itemsDb.transaction(function (transaction) {
 		transaction.executeSql("CREATE TABLE IF NOT EXISTS aws_airport(id, airport_name, airport_id, place, state, continent, continent_en, latitude, longitude, is_favo, modify_time);", [], createTableSuccess, createTableFail);
@@ -33,9 +34,7 @@ function initDatabase() {
 	}
 	function createTableFail(transaction, error){
 		//console.log("***aoaws_init_db : create table faile!");
-		alert("create table failed, reload again!" + error.message);
 		if(reloadCount<1) {
-			//console.log("***aoaws_init_db : reload initDatabase");
 			reloadCount++;
 			initDatabase();
 		}
@@ -54,11 +53,13 @@ function initDatabase() {
 		itemsDb.transaction(function(tx) { tx.executeSql("DROP TABLE aws_airport", [], null, errorHandler); });
 		itemsDb.transaction(function(tx) { tx.executeSql("DROP TABLE aws_weather", [], null, errorHandler); });
 	}
+	$.mobile.hidePageLoadingMsg();
 }
 
 
 function syncData(){
 	//console.log("aoaws_init_db : syncData");
+	$.mobile.showPageLoadingMsg();
 	itemsDb.transaction( function(transaction){
 		if(networkFlag==1)
 		transaction.executeSql("SELECT max(modify_time) as value FROM aws_airport", [], 
@@ -90,6 +91,14 @@ function syncData(){
 		        success: function(data) {
 		        	//console.log("aoaws_init_db : syncAirport success sync");
 		        	if(typeof data == "undefined" || data == null || data=="undefined") return;
+		        	var countTotal = 0;
+		        	function countSql(sizeT){
+		        		countTotal++;
+		        		//console.log("count = "+countTotal+"__size:"+sizeT);
+		        		if(countTotal==sizeT) {
+		        			setTimeout(renderMarker, 500);
+		        		}
+		        	}
 		        	itemsDb.transaction(function(transaction) {
 		        		transaction.executeSql(
 	        					"SELECT airport_id FROM aws_airport ORDER BY airport_id",
@@ -106,7 +115,9 @@ function syncData(){
 	        								transaction.executeSql(
 	        										"UPDATE aws_airport SET airport_name=?, place=?, state=?, continent=?, continent_en=?, latitude=?, longitude=?, modify_time=? WHERE airport_id=?",
 	        										[data[i].airport_name, data[i].place, data[i].name, data[i].continent, data[i].continent_en, data[i].latitude, data[i].longitude, data[i].modify_time, data[i].airport_id],
-	        										null,
+	        										function(transaction){
+	        											countSql(data.length);
+	        										},
 	        										function(error){
 	        											//console.log("***aoaws_init_db : syncAirport : error updating airport "+error.message);
 	        											}
@@ -116,13 +127,17 @@ function syncData(){
 		        							transaction.executeSql(
 		        								"INSERT INTO aws_airport (id, airport_name, airport_id, place, state, continent, continent_en, latitude, longitude,  modify_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ", 
 		        								[i, data[i].airport_name, data[i].airport_id, data[i].place, data[i].name, data[i].continent, data[i].continent_en, data[i].latitude, data[i].longitude, data[i].modify_time],
-		    			                        null,
+		    			                        function(transaction) {
+		        									//console.log("aoaws_init_db : syncAirport : insert of airportInsert="+this.i+data.length);
+		        									countSql(data.length);
+		        									},
 		    			                        function(error){
 		        									//console.log("***##aoaws_init_db : syncAirport : error inserting airport "+error.message);
 		        									}
 		    			                    );
 	        							}
 	        			        	}
+	        						//initMap();
 	        						//console.log("aoaws_init_db : syncAirport : end sqlite update");
 	        						
 	        					},
@@ -170,7 +185,9 @@ function syncData(){
 	        								transaction.executeSql(
 	        										"UPDATE aws_weather SET wind_direction=?, wind_speed=?,  weather=?, visibility=?, temperature=?, rh_percent=?, dewpoint_c=?, ceiling=?, msl_pressure=?, observation_time=?, metar_text=?, modify_time=? WHERE airport_id=?",
 	        										[data[i].wind_direction, data[i].wind_speed, data[i].weather, data[i].visibility, data[i].temperature, data[i].rh_percent, data[i].dewpoint_c, data[i].ceiling, data[i].msl_pressure, data[i].observation_time, data[i].metar_text, data[i].modify_time, data[i].airport_id],
-	        										null,
+	        										function(transaction){
+	        											
+	        											},
 	        										function(error){
 	        											//console.log("***aoaws_init_db : syncWeather : error updating weather "+error.message);
 	        											}
@@ -180,7 +197,10 @@ function syncData(){
 		        							transaction.executeSql(
 		    			                        "INSERT INTO aws_weather (airport_id, wind_direction, wind_speed, weather, visibility, temperature, rh_percent, dewpoint_c, ceiling, msl_pressure, observation_time, metar_text, modify_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ", 
 		    			                        [data[i].airport_id, data[i].wind_direction, data[i].wind_speed, data[i].weather, data[i].visibility, data[i].temperature, data[i].rh_percent, data[i].dewpoint_c, data[i].ceiling, data[i].msl_pressure, data[i].observation_time, data[i].metar_text, data[i].modify_time],
-		    			                        null,
+		    			                        function(transaction){
+		    			                        	//console.log("aoaws_init_db : syncWeather : insert of weatherInsert=");
+		    			                        	
+		    			                        	},
 		    			                        function(error){
 		    			                        	//console.log("***##aoaws_init_db : syncWeather : error inserting weather "+error.message);
 		    			                        	}
@@ -188,7 +208,7 @@ function syncData(){
 	        							}
 	        			        	}
 	        						//console.log("aoaws_init_db : syncWeather : end sqlite update");
-	        						showList();
+	        						
 	        					},
 	        					function(error){
 	        						////console.log("***aoaws_init_db : syncWeather : error select airport_id list "+error.message);
@@ -211,5 +231,6 @@ function syncData(){
 		}
 		
 	});
+	$.mobile.hidePageLoadingMsg();
 }
 

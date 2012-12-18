@@ -1,14 +1,16 @@
 var USE_PHONEGAP = false;
-var SCRIPT_LOAD_TIMEOUT = 3000;
+var SCRIPT_LOAD_TIMEOUT = 1000;
 var MAP_LOAD_TIMEOUT = 3000;
 var FIT_BOUNDS_TIMEOUT = 500;
 var defaultLatLng = new google.maps.LatLng(23.56399,120.84961);
 
-var itemsDb = openDatabase('aoaws', '1.0', 'Web Storage DB', 50*1024);
+if(itemsDb==="undefined")
+	itemsDb = openDatabase('aoaws', '1.0', 'Web Storage DB', 60*1024);
 $('#map').live('pageshow', initMap);
 $('#airport_dialog').live('pageshow', showList);
 
 function showList(){
+	//console.log("aoaws_map : showList");
 	getList(displayList);
 }
 /**
@@ -24,11 +26,13 @@ $(window).orientationchange(function (e) {
 
 function initMap() {
 	//console.log("aoaws_map : initMap");
+	$.mobile.showPageLoadingMsg();
 	setTimeout(checkConnection, SCRIPT_LOAD_TIMEOUT);
+
 	function checkConnection() {
 		//console.log("aoaws_map : checkConnection of google");
 	    if (typeof google == "undefined") {
-	    	alert('網路連線逾時,系統自動切換為列表頁面!');
+	    	alert('google連線逾時,系統自動切換為列表頁面!');
             $.mobile.changePage("#airport_dialog");
 	    }
 	}
@@ -75,7 +79,20 @@ function initMap() {
     
     window.airportsMap = new google.maps.Map(document.getElementById('mapCanvas'), mapOptions);
     
-    var addMarkers = function(airports) {
+    renderMarker();
+    /*
+    setTimeout( function() { 
+    		//console.log("aoaws_map : fitBounds");
+    		window.airportsMap.fitBounds(window.airportsMapBounds);
+    	}, 
+    	FIT_BOUNDS_TIMEOUT 
+    );
+    */
+    $.mobile.hidePageLoadingMsg();
+}
+
+function renderMarker(){
+	var addMarkers = function(airports) {
     	//console.log("aoaws_map : addMarkers : airports.length" + airports.length);
     	//window.airportsMapBounds = new google.maps.LatLngBounds();
     	for (var i = 0; i < airports.length; i++) {
@@ -127,9 +144,8 @@ function initMap() {
 		var airports = [];
 		itemsDb.readTransaction(function(transaction) {
 			//console.log("aoaws_map : getAirportLocation : curContinent : " + curContinent);
-			transaction.executeSql(("SELECT a.id, a.airport_name, a.airport_id, w.weather, a.latitude, a.longitude FROM aws_airport as a, aws_weather as w where w.airport_id=a.airport_id and a.continent_en=? order by a.id"), [curContinent], function(transaction, results) {
-				//console.log("aoaws_map : getAirportLocation : select all airport list");
-	    		for (var ii = 0; ii < results.rows.length; ii++) {
+			transaction.executeSql(("SELECT a.id, a.airport_name, a.airport_id, a.latitude, a.longitude FROM aws_airport as a where  a.continent_en=? order by a.id"), [curContinent], function(transaction, results) {
+				for (var ii = 0; ii < results.rows.length; ii++) {
 	                airports.push(results.rows.item(ii));
 	            }
 	    		callback(airports);
@@ -140,19 +156,7 @@ function initMap() {
 	        );
 	    });
 	}
-    /*
-    setTimeout( function() { 
-    		//console.log("aoaws_map : fitBounds");
-    		window.airportsMap.fitBounds(window.airportsMapBounds);
-    	}, 
-    	FIT_BOUNDS_TIMEOUT 
-    );
-    */
-    
 }
-
-
-
 function displayList(ls){
 	$.mobile.showPageLoadingMsg();
 	for(var i=0; i<ls.length; i++){
@@ -197,6 +201,7 @@ function displayList(ls){
 	$('#stateList').listview('refresh');
 	$.mobile.hidePageLoadingMsg();
 }
+
 function fetchWeatherDetail(entry){
 	$.mobile.showPageLoadingMsg();
 	
@@ -204,7 +209,9 @@ function fetchWeatherDetail(entry){
 		var airportId = entry.airport_id;
 		if(!airportId) return;
 		airportId = airportId.substr(2);
-    	transaction.executeSql(("SELECT a.airport_name, a.airport_id, a.place, a.state, w.wind_direction, w.wind_speed, w.visibility, w.weather, w.temperature, w.ceiling, w.observation_time, w.metar_text FROM aws_airport as a, aws_weather as w where w.airport_id=a.airport_id and a.airport_id = ?order by a.id"), [airportId], function(transaction, results) {
+		//console.log("detail airportId : "+airportId);
+    	transaction.executeSql(("SELECT a.airport_name, a.airport_id, a.place, a.state, w.wind_direction, w.wind_speed, w.visibility, w.weather, w.temperature, w.ceiling, w.observation_time FROM aws_airport as a, aws_weather as w where w.airport_id=a.airport_id and a.airport_id = ?"), [airportId], function(transaction, results) {
+    		//console.log("detail airportLog count : "+results.rows.length);
     		var w = results.rows.item(0);
     		if(w.state!=null && w.state!="undefined")  $('#state').html(w.state);
     		else $('#state').html("");

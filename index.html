@@ -224,6 +224,28 @@ thead th {
 </head>
 <body onload="initDatabase()">
 
+	
+	<div data-role="page" id="map" data-position="fixed" data-dom-cache="true">
+		<div data-role="header" data-theme="b" >
+			<h2 style="float: center;">航空氣象資訊</h2>
+			<a href="#map_state" class="ui-btn-right">地區</a>
+		</div>
+		
+		<div id="mapCanvas"></div>
+		
+		<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
+			<div data-role="navbar">
+				<ul>
+					<li><a href="#map" id="mapnav" class="ui-btn-active">地圖</a></li>
+					<li><a href="#airport_dialog" id="listnav">列表</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+
+
+
 
 	<div data-role="page" id="airport_dialog" data-dom-cache="true">
 		<div data-role="header" data-theme="b">
@@ -292,27 +314,6 @@ thead th {
 	</div>
 	
 	
-	<div data-role="page" id="map" data-position="fixed" data-dom-cache="true">
-		<div data-role="header" data-theme="b" >
-			<h2 style="float: center;">航空氣象資訊</h2>
-			<a href="#map_state" class="ui-btn-right">地區</a>
-		</div>
-		
-		<div id="mapCanvas"></div>
-		
-		<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
-			<div data-role="navbar">
-				<ul>
-					<li><a href="#map" id="mapnav" class="ui-btn-active">地圖</a></li>
-					<li><a href="#airport_dialog" id="listnav">列表</a></li>
-				</ul>
-			</div>
-		</div>
-	</div>
-
-
-
-
 
 	
 	<div data-role="page" id="map_state" data-dom-cache="true">
