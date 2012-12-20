@@ -73,9 +73,9 @@ thead th {
 	text-shadow: 0 -1px 0 #000;
 	color: #fff;
 	font-family: Helvetica Neue, Helvetica, arial;
-	font-size: 18px;
+	font-size: 16px;
 	line-height: 25px;
-	padding: 4px 45px 4px 15px;
+	padding: 1px 45px 1px 15px;
 	font-weight: bold;
 	background: url(image/arrow.png) 95% 50% no-repeat;
 }
@@ -88,87 +88,17 @@ thead th {
 	background: rgb(112, 112, 112) !important;
 }
 
-.ui-btn-corner-tl {
-	-moz-border-radius-topleft: 0.2em;
-	-webkit-border-top-left-radius: 0.2em;
-	border-top-left-radius: 0.2em;
-}
-.ui-btn-corner-tr {
-	-moz-border-radius-topright: 0.2em;
-	-webkit-border-top-right-radius: 0.2em;
-	border-top-right-radius: 0.2em;
-}
-.ui-btn-corner-bl {
-	-moz-border-radius-bottomleft: 0.2em;
-	-webkit-border-bottom-left-radius: 0.2em;
-	border-bottom-left-radius: 0.2em;
-}
-.ui-btn-corner-br {
-	-moz-border-radius-bottomright: 0.2em;
-	-webkit-border-bottom-right-radius: 0.2em;
-	border-bottom-right-radius: 0.2em;
-}
-.ui-btn-corner-top {
-	-moz-border-radius-topleft: 0.2em;
-	-webkit-border-top-left-radius: 0.2em;
-	border-top-left-radius: 0.2em;
-	-moz-border-radius-topright: 0.2em;
-	-webkit-border-top-right-radius: 0.2em;
-	border-top-right-radius: 0.2em;
-}
-.ui-btn-corner-bottom {
-	-moz-border-radius-bottomleft: 0.2em;
-	-webkit-border-bottom-left-radius: 0.2em;
-	border-bottom-left-radius: 0.2em;
-	-moz-border-radius-bottomright: 0.2em;
-	-webkit-border-bottom-right-radius: 0.2em;
-	border-bottom-right-radius: 0.2em;
-}
-.ui-btn-corner-right {
-	 -moz-border-radius-topright: 0.2em;
-	-webkit-border-top-right-radius: 0.2em;
-	border-top-right-radius: 0.2em;
-	-moz-border-radius-bottomright: 0.2em;
-	-webkit-border-bottom-right-radius: 0.2em;
-	border-bottom-right-radius: 0.2em;
-}
-.ui-btn-corner-left {
-	-moz-border-radius-topleft: 0.2em;
-	-webkit-border-top-left-radius: 0.2em;
-	border-top-left-radius: 0.2em;
-	-moz-border-radius-bottomleft: 0.2em;
-	-webkit-border-bottom-left-radius: 0.2em;
-	border-bottom-left-radius: 0.2em;
-}
-.ui-btn-corner-all {
-	-moz-border-radius: 0.2em;
-	-webkit-border-radius: 0.2em;
-	border-radius: 0.2em;
+.my_icon_wrapper {
+        float: left; 
+        width: 50px; height: 50px;
+        text-align: center;
+        margin-right: 15px; 
+        vertical-align: middle; 
 }
 
-.ui-corner-tl,
-.ui-corner-tr,
-.ui-corner-bl,
-.ui-corner-br,
-.ui-corner-top,
-.ui-corner-bottom,
-.ui-corner-right,
-.ui-corner-left,
-.ui-corner-all,
-.ui-btn-corner-tl,
-.ui-btn-corner-tr,
-.ui-btn-corner-bl,
-.ui-btn-corner-br,
-.ui-btn-corner-top,
-.ui-btn-corner-bottom,
-.ui-btn-corner-right,
-.ui-btn-corner-left,
-.ui-btn-corner-all {
-  -webkit-background-clip: padding-box;
-     -moz-background-clip: padding;
-          background-clip: padding-box;
-}
+#weather_detail  { background: transparent url(image/bg.gif) 0 0 repeat; }
 </style>
+	<script src="cordova-1.9.0.js"></script>
 	<script src="jquery.mobile/jquery-1.8.3.min.js"></script>
 	<script src="jquery.mobile/jquery.mobile-1.2.0.min.js"></script>
 
@@ -181,122 +111,127 @@ thead th {
 	$.mobile.defaultPageTransition = 'none';
     $.mobile.defaultDialogTransition = 'none';
     
-	$(':jqmData(url^=airport_dialog)').live('pagebeforecreate', 
+	$(':jqmData(url^=global)').live('pagebeforecreate', 
 			  function(event) {
 			    $(this).filter(':jqmData(url*=ui-page)').find(':jqmData(role=header)')
-			      .prepend('<a href="#" data-rel="back" data-icon="back" class="ui-btn-right">返回</a>')
+			      .prepend('<a href="#" data-rel="back" data-icon="back" class="ui-btn-left">返回</a>')
 			  });
 	
 	$('#af').live('click', function(){
 		curContinent = 'af';
 		$.mobile.changePage("#map");
+		renderMarker();
 	});
 	$('#sa').live('click', function(){
 		curContinent = 'sa';
 		$.mobile.changePage("#map");
+		renderMarker();
 	});
 	$('#na').live('click', function(){
 		curContinent = 'na';
 		$.mobile.changePage("#map");
+		renderMarker();
 	});
 	$('#as').live('click', function(){
 		curContinent = 'as';
 		$.mobile.changePage("#map");
+		renderMarker();
 	});
 	$('#au').live('click', function(){
 		curContinent = 'au';
 		$.mobile.changePage("#map");
+		renderMarker();
 	});
 	$('#tw').live('click', function(){
 		curContinent = 'tw';
 		$.mobile.changePage("#map");
+		renderMarker();
 	});
 	$('#eu').live('click', function(){
 		curContinent = 'eu';
 		$.mobile.changePage("#map");
+		renderMarker();
 	});
 	$('#cn').live('click', function(){
 		curContinent = 'cn';
 		$.mobile.changePage("#map");
+		renderMarker();
+	});
+	$('a.refresh').live('click', function(){
+		curContinent = 'tw';
+		$.mobile.changePage("#map");
+		initDatabase();
+		initMap();
 	});
 	</script>
 	
 </head>
 <body onload="initDatabase()">
 
-	
 	<div data-role="page" id="map" data-position="fixed" data-dom-cache="true">
 		<div data-role="header" data-theme="b" >
 			<h2 style="float: center;">航空氣象資訊</h2>
-			<a href="#map_state" class="ui-btn-right">地區</a>
+			<a href="#map_state" class="ui-btn-right">呈現地區</a>
 		</div>
 		
 		<div id="mapCanvas"></div>
 		
 		<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
-			<div data-role="navbar">
-				<ul>
-					<li><a href="#map" id="mapnav" class="ui-btn-active">地圖</a></li>
-					<li><a href="#airport_dialog" id="listnav">列表</a></li>
-				</ul>
+			<div style="text-align: center; margin-top:5px;">
+				<a href="#map"><img src="image/map.png" width="60" height="37"/></a>
+				<a href="#taiwan" style="margin: 0 5px;"><img src="image/taiwan.png"  width="60" height="37"/></a>
+				<a href="#global" style="margin: 0 25px 0 5px;"><img src="image/global.png"  width="60" height="37"/></a>
+				<a href="#" class="refresh"><img src="image/refresh.png"  width="60" height="37"/></a>
 			</div>
 		</div>
 	</div>
 
 
-
-
-
-	<div data-role="page" id="airport_dialog" data-dom-cache="true">
+	<div data-role="page" id="global" data-dom-cache="true">
 		<div data-role="header" data-theme="b">
-			<h2 style="float: center;">選擇地區</h2>
+			<h2 style="float: center;">選擇國際機場</h2>
 		</div>
 		<div data-role="content">
 			<ul data-role="listview" id="stateList">
-				<li id="twMap">
-					<h3>臺灣</h3>
-					<p>臺灣各民航機場最新天氣</p>
-					<ul id="twList">
-					</ul>
-				</li>
 				<li id="cnMap">
-					<h3>大陸</h3>
+					<h2 style="color: #66a3d3;">大陸</h2>
 					<p>大陸各民航機場最新天氣</p>
 					<ul id="cnList">
 					</ul>
 				</li>
 				<li id="asMap">
-					<h3>亞洲</h3>
+					<h2 style="color: #66a3d3;">亞洲</h2>
 					<p>含香港澳門及其它亞洲各民航機場最新天氣</p>
 					<ul id="asList">
 					</ul>
 				</li>
 				<li id="auMap">
-					<h3>大洋洲</h3>
+					<h2 style="color: #66a3d3;">大洋洲</h2>
 					<p>大洋洲各民航機場最新天氣</p>
 					<ul id="auList">
 					</ul>
 				</li>
 				<li id="naMap">
-					<h3>北美洲</h3>
+					
+					<h2 style="color: #66a3d3;">北美洲</h2>
 					<p>北美洲各民航機場最新天氣</p>
 					<ul id="naList">
 					</ul>
 				</li>
 				<li id="saMap">
-					<h3>中南美洲</h3>
+					<h2 style="color: #66a3d3;">中南美洲</h2>
 					<p>中南美洲各民航機場最新天氣</p>
 					<ul id="saList">
 					</ul>
 				</li>
 				<li id="euMap">
-					<h3>歐洲</h3>
+					<h2 style="color: #66a3d3;">歐洲</h2>
 					<p>歐洲各民航機場最新天氣</p>
 					<ul id="euList">
 					</ul>
 				</li>
 				<li id="afMap">
-					<h3>中東&非洲</h3>
+					<h2 style="color: #66a3d3;">中東&非洲</h2>
 					<p>中東與非洲洲各民航機場最新天氣</p>
 					<ul id="afList">
 					</ul>
@@ -304,70 +239,85 @@ thead th {
 			</ul>
 		</div>
 		<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
-			<div data-role="navbar">
-				<ul>
-					<li><a href="#map" id="mapnav">地圖</a></li>
-					<li><a href="#airport_dialog" id="listnav" class="ui-btn-active">列表</a></li>
-				</ul>
+			<div style="text-align: center; margin-top:5px;">
+				<a href="#map"><img src="image/map.png" width="60" height="37"/></a>
+				<a href="#taiwan" style="margin: 0 5px;"><img src="image/taiwan.png"  width="60" height="37"/></a>
+				<a href="#global" style="margin: 0 25px 0 5px;"><img src="image/global.png"  width="60" height="37"/></a>
+				<a href="#" class="refresh"><img src="image/refresh.png"  width="60" height="37"/></a>
 			</div>
 		</div>
 	</div>
 	
-	
-
-	
 	<div data-role="page" id="map_state" data-dom-cache="true">
 		<div data-role="header" data-theme="b">
-			<a href="#" data-rel="back" data-icon="back" class="ui-btn-right">返回</a>
+			<a href="#" data-rel="back" data-icon="back" class="ui-btn-left">返回</a>
 			<h2 style="float: center;">選擇地圖呈現地區</h2>
 		</div>
 		<div data-role="content">
 			<ul data-role="listview">
 				<li id="tw"><a>
-						<h3>臺灣</h3>
+						<h2 style="color: #66a3d3;">臺灣</h2>
 						<p>臺灣各民航機場最新天氣</p>
 						</a>
 				</li>
 				<li id="cn"><a>
-						<h3>大陸</h3>
+						<h2 style="color: #66a3d3;">大陸</h2>
 						<p>大陸各民航機場最新天氣</p>
 						</a>
 				</li>
 				<li id="as"><a>
-						<h3>亞洲</h3>
+						<h2 style="color: #66a3d3;">亞洲</h2>
 						<p>含香港澳門及其它亞洲各民航機場最新天氣</p>
 						</a>
 				</li>
 				<li id="au"><a>
-						<h3>大洋洲</h3>
+						<h2 style="color: #66a3d3;">大洋洲</h2>
 						<p>大洋洲各民航機場最新天氣</p>
 						</a>
 				</li>
 				<li id="na"><a>
-						<h3>北美洲</h3>
+						<h2 style="color: #66a3d3;">北美洲</h2>
 						<p>北美洲各民航機場最新天氣</p>
 						</a>
 				</li>
 				<li id="sa"><a>
-						<h3>中南美洲</h3>
+						<h2 style="color: #66a3d3;">中南美洲</h2>
 						<p>中南美洲各民航機場最新天氣</p></a>
 				</li>
 				<li id="eu"><a>
-						<h3>歐洲</h3>
+						<h2 style="color: #66a3d3;">歐洲</h2>
 						<p>歐洲各民航機場最新天氣</p></a>
 				</li>
 				<li id="af"><a>
-						<h3>中東&非洲</h3>
+						<h2 style="color: #66a3d3;">中東&非洲</h2>
 						<p>中東與非洲洲各民航機場最新天氣</p></a>
 				</li>
 			</ul>
+		</div>
+	</div>
+	
+	<div data-role="page" id="taiwan" data-dom-cache="true">
+		<div data-role="header" data-theme="b">
+			<h2 style="float: center;">選擇台灣機場</h2>
+		</div>
+		<div data-role="content">
+			<ul data-role="listview" id="twList">
+			</ul>
+		</div>
+		<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
+			<div style="text-align: center; margin-top:5px;">
+				<a href="#map"><img src="image/map.png" width="60" height="37"/></a>
+				<a href="#taiwan" style="margin: 0 5px;"><img src="image/taiwan.png"  width="60" height="37"/></a>
+				<a href="#global" style="margin: 0 25px 0 5px;"><img src="image/global.png"  width="60" height="37"/></a>
+				<a href="#" class="refresh"><img src="image/refresh.png"  width="60" height="37"/></a>
+			</div>
 		</div>
 	</div>
 
 	
 	<div data-role="page" id="weather_detail" data-close-btn-text="關閉">
 		<div data-role="header" data-theme="b">
-			<a href="#" data-rel="back" data-icon="back" class="ui-btn-right">返回</a>
+			<a href="#" data-rel="back" data-icon="back" class="ui-btn-left">返回</a>
 			<h2>機場最新氣象資訊</h2>
 		</div>
 		<div data-role="content">
@@ -388,7 +338,7 @@ thead th {
 						<td id="place"></td>
 					</tr>
 					<tr class="row">
-						<th>時間</th>
+						<th>資料時間</th>
 						<td id="time"></td>
 					</tr>
 					<tr class="odd">
