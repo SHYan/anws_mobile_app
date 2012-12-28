@@ -64,7 +64,6 @@ function dropTable() {
 var countTotal = 0;
 function countSql(sizeT){
 	countTotal++;
-	//console.log("count = "+countTotal+"__size:"+sizeT);
 	if(countTotal==sizeT) {
 		setTimeout(renderMarker, 500);
 		countTotal = 0;

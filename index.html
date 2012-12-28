@@ -114,49 +114,64 @@ thead th {
 	$(':jqmData(url^=global)').live('pagebeforecreate', 
 			  function(event) {
 			    $(this).filter(':jqmData(url*=ui-page)').find(':jqmData(role=header)')
-			      .prepend('<a href="#" data-rel="back" data-icon="back" class="ui-btn-left">返回</a>')
+			      .prepend('<a href="#" data-rel="back" data-icon="back" class="ui-btn-left">返回</a>');
+			    $(this).filter(':jqmData(url*=cnList)').find(':jqmData(role=header)')
+			      .prepend('<a href="#" class="ui-btn-right" id="cnM">大陸地圖</a>');
+			    $(this).filter(':jqmData(url*=asList)').find(':jqmData(role=header)')
+			      .prepend('<a href="#" class="ui-btn-right" id="asM">亞洲地圖</a>');
+			    $(this).filter(':jqmData(url*=auList)').find(':jqmData(role=header)')
+			      .prepend('<a href="#" class="ui-btn-right" id="auM">大洋洲地圖</a>');
+			    $(this).filter(':jqmData(url*=naList)').find(':jqmData(role=header)')
+			      .prepend('<a href="#" class="ui-btn-right" id="naM">北美洲地圖</a>');
+			    $(this).filter(':jqmData(url*=saList)').find(':jqmData(role=header)')
+			      .prepend('<a href="#" class="ui-btn-right" id="saM">中南美洲地圖</a>');
+			    $(this).filter(':jqmData(url*=euList)').find(':jqmData(role=header)')
+			      .prepend('<a href="#" class="ui-btn-right" id="euM">歐洲地圖</a>');
+			    $(this).filter(':jqmData(url*=afList)').find(':jqmData(role=header)')
+			      .prepend('<a href="#" class="ui-btn-right" id="afM">中東&非洲地圖</a>');
 			  });
 	
-	$('#af').live('click', function(){
+	$('#af, #afM').live('click', function(){
 		curContinent = 'af';
 		$.mobile.changePage("#map");
 		renderMarker();
 	});
-	$('#sa').live('click', function(){
+	$('#sa, #saM').live('click', function(){
 		curContinent = 'sa';
 		$.mobile.changePage("#map");
 		renderMarker();
 	});
-	$('#na').live('click', function(){
+	$('#na, #naM').live('click', function(){
 		curContinent = 'na';
 		$.mobile.changePage("#map");
 		renderMarker();
 	});
-	$('#as').live('click', function(){
+	$('#as, #asM').live('click', function(){
 		curContinent = 'as';
 		$.mobile.changePage("#map");
 		renderMarker();
 	});
-	$('#au').live('click', function(){
+	$('#au, #auM').live('click', function(){
 		curContinent = 'au';
 		$.mobile.changePage("#map");
 		renderMarker();
 	});
-	$('#tw').live('click', function(){
+	$('#tw, #twM').live('click', function(){
 		curContinent = 'tw';
 		$.mobile.changePage("#map");
 		renderMarker();
 	});
-	$('#eu').live('click', function(){
+	$('#eu, #euM').live('click', function(){
 		curContinent = 'eu';
 		$.mobile.changePage("#map");
 		renderMarker();
 	});
-	$('#cn').live('click', function(){
+	$('#cn, #cnM').live('click', function(){
 		curContinent = 'cn';
 		$.mobile.changePage("#map");
 		renderMarker();
 	});
+	
 	$('a.refresh').live('click', function(){
 		curContinent = 'tw';
 		$.mobile.changePage("#map");
@@ -178,9 +193,8 @@ thead th {
 		
 		<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
 			<div style="text-align: center; margin-top:5px;">
-				<a href="#map"><img src="image/map.png" width="60" height="37"/></a>
 				<a href="#taiwan" style="margin: 0 5px;"><img src="image/taiwan.png"  width="60" height="37"/></a>
-				<a href="#global" style="margin: 0 25px 0 5px;"><img src="image/global.png"  width="60" height="37"/></a>
+				<a href="#global" style="margin: 0 40px 0 5px;"><img src="image/global.png"  width="60" height="37"/></a>
 				<a href="#" class="refresh"><img src="image/refresh.png"  width="60" height="37"/></a>
 			</div>
 		</div>
@@ -240,9 +254,8 @@ thead th {
 		</div>
 		<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
 			<div style="text-align: center; margin-top:5px;">
-				<a href="#map"><img src="image/map.png" width="60" height="37"/></a>
 				<a href="#taiwan" style="margin: 0 5px;"><img src="image/taiwan.png"  width="60" height="37"/></a>
-				<a href="#global" style="margin: 0 25px 0 5px;"><img src="image/global.png"  width="60" height="37"/></a>
+				<a href="#global" style="margin: 0 40px 0 5px;"><img src="image/global.png"  width="60" height="37"/></a>
 				<a href="#" class="refresh"><img src="image/refresh.png"  width="60" height="37"/></a>
 			</div>
 		</div>
@@ -299,6 +312,7 @@ thead th {
 	<div data-role="page" id="taiwan" data-dom-cache="true">
 		<div data-role="header" data-theme="b">
 			<h2 style="float: center;">選擇台灣機場</h2>
+			<a href="#" class="ui-btn-right" id="twM">台灣地圖</a>
 		</div>
 		<div data-role="content">
 			<ul data-role="listview" id="twList">
@@ -306,9 +320,8 @@ thead th {
 		</div>
 		<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
 			<div style="text-align: center; margin-top:5px;">
-				<a href="#map"><img src="image/map.png" width="60" height="37"/></a>
 				<a href="#taiwan" style="margin: 0 5px;"><img src="image/taiwan.png"  width="60" height="37"/></a>
-				<a href="#global" style="margin: 0 25px 0 5px;"><img src="image/global.png"  width="60" height="37"/></a>
+				<a href="#global" style="margin: 0 40px 0 5px;"><img src="image/global.png"  width="60" height="37"/></a>
 				<a href="#" class="refresh"><img src="image/refresh.png"  width="60" height="37"/></a>
 			</div>
 		</div>

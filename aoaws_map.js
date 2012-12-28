@@ -23,7 +23,7 @@ function initMap() {
 	
 	function checkConnection() {
 	    if (typeof google == "undefined") {
-	    	alert('google連線逾時,系統自動切換為列表頁面!');
+	    	alert('Google Map 連線逾時,系統自動切換為列表頁面!');
             $.mobile.changePage("#taiwan");
 	    }
 	}
@@ -170,7 +170,7 @@ function displayGlobal(ls){
 	    	return true;
 	    });
 		if(r.continent_en=="cn"){
-	    	$('#cnList').append(li.html(lihtml));
+			$('#cnList').append(li.html(lihtml));
 	    }else if(r.continent_en=="as"){
 	    	$('#asList').append(li.html(lihtml));
 	    }else if(r.continent_en=="au"){
@@ -186,6 +186,7 @@ function displayGlobal(ls){
 	    }
 		
 	}
+	
 	$('#cnList').listview('refresh');
 	$('#asList').listview('refresh');
 	$('#auList').listview('refresh');
@@ -198,7 +199,7 @@ function displayGlobal(ls){
 }
 function getGlobal(callback){
 	var airports = [];
-	if($('#cnList li').length>0) return;
+	if($('#cnList li').length>1) return;
 	var tmp = 'tw';
 	itemsDb.readTransaction(function(transaction) {
 		transaction.executeSql(
